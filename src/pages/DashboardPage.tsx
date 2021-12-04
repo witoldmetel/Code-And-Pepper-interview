@@ -1,10 +1,14 @@
+import { useState } from 'react';
+
 import { Container, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
-import { InitCard } from '../core/components';
-import { initCards } from '../constants';
+import { InitCard, InitCardProps } from '../core/components';
+import { initCards, INIT_CARD_TITLE } from '../constants';
 
 export default function DashboardPage() {
+  const [selectedCard, setSelectedCard] = useState(INIT_CARD_TITLE.RANDOM);
+
   return (
     <>
       <Container maxWidth="lg" component="main" sx={{ p: 5 }}>
@@ -15,8 +19,13 @@ export default function DashboardPage() {
           Choose one of the resources and participate in the galactic battle!
         </Typography>
         <Grid container spacing={5} alignItems="flex-start" sx={{ p: 5 }}>
-          {initCards.map((card) => (
-            <InitCard key={card.title} {...card} />
+          {initCards.map((card: Pick<InitCardProps, 'title' | 'description'>) => (
+            <InitCard
+              key={card.title}
+              {...card}
+              selectedCard={selectedCard}
+              onClick={(cardTitle: INIT_CARD_TITLE) => setSelectedCard(cardTitle)}
+            />
           ))}
         </Grid>
       </Container>
