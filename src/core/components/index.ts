@@ -1,5 +1,6 @@
 export { Logo } from './Logo';
 export { InitCard } from './InitCard';
+export { Playground } from './Playground';
 
 /**
  * TYPES

@@ -1,6 +1,7 @@
-import { Container, Typography, Button } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 
 import { INIT_CARD_TITLE } from 'src/constants';
+import { Playground } from 'src/core/components';
 
 type GameboardProps = {
   selectedCard: INIT_CARD_TITLE;
@@ -14,9 +15,8 @@ export function Gameboard({ selectedCard, onPlayClick }: GameboardProps) {
       <Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
         {`${selectedCard} Battle`}
       </Typography>
-      <Button variant="contained" onClick={() => onPlayClick(false)}>
-        Start New Game
-      </Button>
+
+      <Playground type={selectedCard} onPlayClick={onPlayClick} />
     </Container>
   );
 }
