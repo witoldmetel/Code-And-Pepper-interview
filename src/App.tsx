@@ -1,14 +1,20 @@
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import { ThemeConfig } from './core/theme';
 import { Layout } from './core/layouts';
 
-import DashboardPage from './pages/DashboardPage';
+import MainPage from './pages/MainPage';
+
+const queryClient = new QueryClient();
 
 export function App() {
   return (
-    <ThemeConfig>
-      <Layout>
-        <DashboardPage />
-      </Layout>
-    </ThemeConfig>
+    <QueryClientProvider client={queryClient}>
+      <ThemeConfig>
+        <Layout>
+          <MainPage />
+        </Layout>
+      </ThemeConfig>
+    </QueryClientProvider>
   );
 }
