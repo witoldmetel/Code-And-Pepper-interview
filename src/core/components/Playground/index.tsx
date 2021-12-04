@@ -8,6 +8,7 @@ import { INIT_CARD_TITLE } from 'src/constants';
 import { usePeople } from 'src/hooks/usePeople';
 import { getPageCount } from 'src/utils/getPageCount';
 import { getRandomNumber } from 'src/utils/getRandomNumber';
+import GameService from 'src/services/GameService';
 
 type PlaygroundProps = {
   type: INIT_CARD_TITLE;
@@ -19,12 +20,38 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
   const [pageCount, setPageCount] = useState(1);
   const { data, isLoading, isError, refetch } = usePeople(pageCount);
+  const [firstPlayer, setFirstPlayer] = useState(null);
+  const [secondPlayer, setSecondPlayer] = useState(null);
+  const [battleResult, setBattleResult] = useState('');
+
+  useEffect(() => {
+    if (firstPlayer && secondPlayer) {
+      const result = GameService.getBattleResult(type, firstPlayer, secondPlayer);
+
+      setBattleResult(result);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstPlayer, secondPlayer]);
 
   useEffect(() => {
     if (data) {
       setPageCount(getPageCount(data.count));
+
+      console.log(data.results, data.results[getRandomNumber(data.results.length)]);
+
+      if (!battleResult.includes((firstPlayer as any)?.name)) {
+        setFirstPlayer(data.results[getRandomNumber(data.results.length)]);
+      }
+
+      if (!battleResult.includes((secondPlayer as any)?.name)) {
+        setSecondPlayer(data.results[getRandomNumber(data.results.length)]);
+      }
     }
   }, [data]);
+
+  const onPlayAgainClick = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -38,7 +65,7 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
     return (
       <div className={classes.wrapper}>
         <span>Cannot get cards. Please try again</span>
-        <Button className={classes.button} variant="contained" onClick={() => refetch()}>
+        <Button className={classes.button} variant="contained" onClick={() => onPlayAgainClick()}>
           Play Again
         </Button>
       </div>
@@ -47,14 +74,14 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
 
   return (
     <Container maxWidth="lg" component="main" className={classes.root}>
+      <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
-        <GameCard {...data.results[getRandomNumber(data.results.length)]} />
+        <GameCard {...firstPlayer} isWinner={battleResult.includes((firstPlayer as any)?.name)} />
         VS.
-        <GameCard {...data.results[getRandomNumber(data.results.length)]} />
+        <GameCard {...secondPlayer} isWinner={battleResult.includes((secondPlayer as any)?.name)} />
       </div>
-
       <div className={classes.actionsButton}>
-        <Button className={classes.button} variant="contained" onClick={() => refetch()}>
+        <Button className={classes.button} variant="contained" onClick={() => onPlayAgainClick()}>
           Play Again
         </Button>
         <Button className={classes.button} variant="contained" onClick={() => onPlayClick(false)}>
@@ -67,7 +94,10 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: 40
+    padding: 20
+  },
+  result: {
+    textAlign: 'center'
   },
   cardsWrapper: {
     display: 'flex',
