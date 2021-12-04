@@ -1,8 +1,8 @@
 import { BASE_URL } from './constants';
-import { getRandomPage } from 'src/utils/getRandomPage';
+import { getRandomNumber } from 'src/utils/getRandomNumber';
 
 export default async function fetchPeople(pageCount: number) {
-  const page = getRandomPage(pageCount);
+  const page = getRandomNumber(pageCount);
   const response = await fetch(`${BASE_URL}/people/?page=${page}`);
 
   return response.json();
