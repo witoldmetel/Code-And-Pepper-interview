@@ -5,31 +5,36 @@ import { makeStyles } from '@mui/styles';
 
 import GameService from 'src/services/GameService';
 import { GameCard } from '../GameCard';
-import { usePeople } from 'src/hooks/usePeople';
 import { getPageCount } from 'src/utils/getPageCount';
 import { getRandomNumber } from 'src/utils/getRandomNumber';
-import { INIT_CARD_TITLE } from 'src/constants';
+
 import { GameCardType } from '../types';
+import { useGameContext } from 'src/hooks/useGameContext';
 
 type PlaygroundProps = {
-  type: INIT_CARD_TITLE;
-
   onPlayClick: (isGameActive: boolean) => void;
 };
 
-export function Playground({ type, onPlayClick }: PlaygroundProps) {
+export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const [pageCount, setPageCount] = useState(1);
-  const { data, isLoading, isError, refetch } = usePeople(pageCount);
+  const { resource, gameData, setPageCount } = useGameContext();
+  console.log('file: index.tsx ~ line 21 ~ Playground ~ gameData', gameData);
   const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
 
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
 
+  const { data, isLoading, isError, refetch } = gameData;
+
+  // useEffect(() => {
+  //   setPageCount(getPageCount(data.count));
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
   useEffect(() => {
     if (firstPlayer && secondPlayer) {
-      const result = GameService.getBattleResult(type, firstPlayer, secondPlayer);
+      const result = GameService.getBattleResult(resource, firstPlayer, secondPlayer);
 
       setBattleResult(result);
     }
@@ -38,8 +43,6 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
 
   useEffect(() => {
     if (data) {
-      setPageCount(getPageCount(data.count));
-
       if (!isPlayerWinner(firstPlayer?.name as string)) {
         setFirstPlayer(data.results[getRandomNumber(data.results.length)]);
       }
@@ -78,13 +81,13 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
       <div className={classes.cardsWrapper}>
         <GameCard
           {...(firstPlayer as GameCardType)}
-          type={type}
+          type={resource}
           isWinner={battleResult.includes(firstPlayer?.name as string)}
         />
         vs.
         <GameCard
           {...(secondPlayer as GameCardType)}
-          type={type}
+          type={resource}
           isWinner={battleResult.includes(secondPlayer?.name as string)}
         />
       </div>
