@@ -7,6 +7,7 @@ import { GameCard } from '../GameCard';
 import { useGameContext } from 'src/hooks/useGameContext';
 import { getRandomNumber } from 'src/utils/getRandomNumber';
 import { GameCardType } from '../types';
+import { CharacterTemplate, INIT_CARD_TITLE, StarshipTemplate } from 'src/constants';
 
 type PlaygroundProps = {
   onPlayClick: (isGameActive: boolean) => void;
@@ -14,11 +15,12 @@ type PlaygroundProps = {
 
 export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const { gameData, getBattleResult } = useGameContext();
+  const { selectedResource, gameData, getBattleResult } = useGameContext();
   const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
 
+  const playerTemplate = selectedResource === INIT_CARD_TITLE.CHARACTER ? CharacterTemplate : StarshipTemplate;
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
 
   //@todo: Add proper type
@@ -27,11 +29,11 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
   useEffect(() => {
     if (data) {
       if (!isPlayerWinner(firstPlayer?.name as string)) {
-        setFirstPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)]);
+        setFirstPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)] ?? playerTemplate);
       }
 
       if (!isPlayerWinner(secondPlayer?.name as string)) {
-        setSecondPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)]);
+        setSecondPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)] ?? playerTemplate);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
