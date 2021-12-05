@@ -1,3 +1,4 @@
+// @todo: Add proper type
 export type GameContextType = {
   resource: any;
   setResource: any;

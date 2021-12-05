@@ -14,7 +14,7 @@ type PlaygroundProps = {
 
 export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const { resource, gameData, getBattleResult } = useGameContext();
+  const { gameData, getBattleResult } = useGameContext();
   const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
@@ -25,7 +25,7 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
 
   useEffect(() => {
     if (firstPlayer && secondPlayer) {
-      const result = getBattleResult(resource, firstPlayer, secondPlayer);
+      const result = getBattleResult(firstPlayer, secondPlayer);
 
       setBattleResult(result);
     }
@@ -70,17 +70,9 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
     <Container maxWidth="lg" component="main" className={classes.root}>
       <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
-        <GameCard
-          {...(firstPlayer as GameCardType)}
-          type={resource}
-          isWinner={battleResult.includes(firstPlayer?.name as string)}
-        />
+        <GameCard {...(firstPlayer as GameCardType)} isWinner={battleResult.includes(firstPlayer?.name as string)} />
         vs.
-        <GameCard
-          {...(secondPlayer as GameCardType)}
-          type={resource}
-          isWinner={battleResult.includes(secondPlayer?.name as string)}
-        />
+        <GameCard {...(secondPlayer as GameCardType)} isWinner={battleResult.includes(secondPlayer?.name as string)} />
       </div>
       <div className={classes.actionsButton}>
         <Button className={classes.button} variant="contained" onClick={onPlayAgainClick()}>

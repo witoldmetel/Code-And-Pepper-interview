@@ -36,7 +36,6 @@ const GameContext = createContext<GameContextType | null>(null);
 function GameProvider({ children }: { children: ReactNode }) {
   const [resource, setResource] = useState(INIT_CARD_TITLE.RANDOM);
   const [pageCount, setPageCount] = useState(1);
-  console.log('file: GameContext.tsx ~ line 39 ~ GameProvider ~ pageCount', pageCount);
   const {
     data: peopleData,
     isLoading: isLoadingPeopleData,
@@ -80,7 +79,6 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [resource, peopleData, starshipsData]);
 
   useEffect(() => {
-    console.log(resource);
     if (getResource(resource) === INIT_CARD_TITLE.CHARACTER && peopleData) {
       setPageCount(getPageCount(peopleData.count));
     }
@@ -88,14 +86,11 @@ function GameProvider({ children }: { children: ReactNode }) {
     if (getResource(resource) === INIT_CARD_TITLE.STARSHIP && starshipsData) {
       setPageCount(getPageCount(starshipsData.count));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resource]);
 
-  const getBattleResult = (
-    type: INIT_CARD_TITLE,
-    firstPlayer: Character | Starship,
-    secondPlayer: Character | Starship
-  ): string => {
-    if (type === INIT_CARD_TITLE.CHARACTER) {
+  const getBattleResult = (firstPlayer: Character | Starship, secondPlayer: Character | Starship): string => {
+    if (resource === INIT_CARD_TITLE.CHARACTER) {
       const firstMass = convertToInteger((firstPlayer as Character).mass);
       const secondMass = convertToInteger((secondPlayer as Character).mass);
 
@@ -108,6 +103,25 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (firstMass < secondMass) {
+        return `The winner is ${secondPlayer.name}`;
+      }
+
+      return 'We have draw!';
+    }
+
+    if (resource === INIT_CARD_TITLE.STARSHIP) {
+      const firstCrew = convertToInteger((firstPlayer as Starship).crew);
+      const secondCrew = convertToInteger((secondPlayer as Starship).crew);
+
+      if (isNaN(firstCrew) || isNaN(secondCrew)) {
+        return 'Unknown result of the battle';
+      }
+
+      if (firstCrew > secondCrew) {
+        return `The winner is ${firstPlayer.name}`;
+      }
+
+      if (firstCrew < secondCrew) {
         return `The winner is ${secondPlayer.name}`;
       }
 
