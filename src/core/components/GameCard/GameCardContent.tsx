@@ -2,14 +2,16 @@ import { Typography, CardHeader, CardContent, Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import { INIT_CARD_TITLE } from 'src/constants';
+import { useGameContext } from 'src/hooks/useGameContext';
 import { GameCardType, Character, Starship } from '../types';
 
-type GameCardContentProps = GameCardType & { type: INIT_CARD_TITLE };
+type GameCardContentProps = GameCardType;
 
 export function GameCardContent(props: GameCardContentProps) {
   const classes = useStyles();
+  const { selectedResource } = useGameContext();
 
-  return props.type === INIT_CARD_TITLE.CHARACTER ? (
+  return selectedResource === INIT_CARD_TITLE.CHARACTER ? (
     <>
       <CardHeader className={classes.header} title={props.name ?? 'Peasant'} />
       <CardContent className={classes.content}>
@@ -62,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    width: 300,
+    width: 400,
     height: 300
   }
 }));

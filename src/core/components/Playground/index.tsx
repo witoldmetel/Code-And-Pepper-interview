@@ -3,53 +3,50 @@ import { useEffect, useState } from 'react';
 import { Button, Container, CircularProgress } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-import GameService from 'src/services/GameService';
 import { GameCard } from '../GameCard';
-import { usePeople } from 'src/hooks/usePeople';
-import { getPageCount } from 'src/utils/getPageCount';
+import { useGameContext } from 'src/hooks/useGameContext';
 import { getRandomNumber } from 'src/utils/getRandomNumber';
-import { INIT_CARD_TITLE } from 'src/constants';
-import { Character } from '../types';
+import { GameCardType } from '../types';
+import { CharacterTemplate, INIT_CARD_TITLE, StarshipTemplate } from 'src/constants';
 
 type PlaygroundProps = {
-  type: INIT_CARD_TITLE;
-
   onPlayClick: (isGameActive: boolean) => void;
 };
 
-export function Playground({ type, onPlayClick }: PlaygroundProps) {
+export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const [pageCount, setPageCount] = useState(1);
-  const { data, isLoading, isError, refetch } = usePeople(pageCount);
-  const [firstPlayer, setFirstPlayer] = useState<Character | null>(null);
-  const [secondPlayer, setSecondPlayer] = useState<Character | null>(null);
+  const { selectedResource, gameData, getBattleResult } = useGameContext();
+  const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
+  const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
 
+  const playerTemplate = selectedResource === INIT_CARD_TITLE.CHARACTER ? CharacterTemplate : StarshipTemplate;
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
+
+  //@todo: Add proper type
+  const { data, isLoading, isError, refetch } = gameData as any;
+
+  useEffect(() => {
+    if (data) {
+      if (!isPlayerWinner(firstPlayer?.name as string)) {
+        setFirstPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)] ?? playerTemplate);
+      }
+
+      if (!isPlayerWinner(secondPlayer?.name as string)) {
+        setSecondPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)] ?? playerTemplate);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     if (firstPlayer && secondPlayer) {
-      const result = GameService.getBattleResult(type, firstPlayer, secondPlayer);
+      const result = getBattleResult(firstPlayer, secondPlayer);
 
       setBattleResult(result);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstPlayer, secondPlayer]);
-
-  useEffect(() => {
-    if (data) {
-      setPageCount(getPageCount(data.count));
-
-      if (!isPlayerWinner(firstPlayer?.name as string)) {
-        setFirstPlayer(data.results[getRandomNumber(data.results.length)]);
-      }
-
-      if (!isPlayerWinner(secondPlayer?.name as string)) {
-        setSecondPlayer(data.results[getRandomNumber(data.results.length)]);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   const onPlayAgainClick = () => () => refetch();
 
@@ -76,17 +73,9 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
     <Container maxWidth="lg" component="main" className={classes.root}>
       <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
-        <GameCard
-          {...(firstPlayer as Character)}
-          type={type}
-          isWinner={battleResult.includes(firstPlayer?.name as string)}
-        />
+        <GameCard {...(firstPlayer as GameCardType)} isWinner={isPlayerWinner(firstPlayer?.name as string)} />
         vs.
-        <GameCard
-          {...(secondPlayer as Character)}
-          type={type}
-          isWinner={battleResult.includes(secondPlayer?.name as string)}
-        />
+        <GameCard {...(secondPlayer as GameCardType)} isWinner={isPlayerWinner(secondPlayer?.name as string)} />
       </div>
       <div className={classes.actionsButton}>
         <Button className={classes.button} variant="contained" onClick={onPlayAgainClick()}>

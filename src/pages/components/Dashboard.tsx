@@ -1,18 +1,17 @@
 import { Container, Typography, Grid, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
+import { useGameContext } from 'src/hooks/useGameContext';
 import { InitCard, InitCardProps } from 'src/core/components';
 import { initCards, INIT_CARD_TITLE } from 'src/constants';
 
 type DashboardProps = {
-  selectedCard: INIT_CARD_TITLE;
-
-  setSelectedCard: (selectedCard: INIT_CARD_TITLE) => void;
   onPlayClick: (isGameActive: boolean) => void;
 };
 
-export function Dashboard({ selectedCard, setSelectedCard, onPlayClick }: DashboardProps) {
+export function Dashboard({ onPlayClick }: DashboardProps) {
   const classes = useStyles();
+  const { resource, onResourceSelect } = useGameContext();
 
   return (
     <Container className={classes.root} maxWidth="lg" component="main">
@@ -27,8 +26,8 @@ export function Dashboard({ selectedCard, setSelectedCard, onPlayClick }: Dashbo
           <InitCard
             key={card.title}
             {...card}
-            selectedCard={selectedCard}
-            onClick={(cardTitle: INIT_CARD_TITLE) => setSelectedCard(cardTitle)}
+            selectedCard={resource}
+            onClick={(cardTitle: INIT_CARD_TITLE) => onResourceSelect(cardTitle)}
           />
         ))}
       </Grid>

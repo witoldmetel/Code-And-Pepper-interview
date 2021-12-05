@@ -1,18 +1,17 @@
 import { Card, Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-import { INIT_CARD_TITLE } from 'src/constants';
 import { GameCardType } from '../types';
 import { GameCardContent } from './GameCardContent';
 
-type GameCardProps = GameCardType & { type: INIT_CARD_TITLE; isWinner: boolean };
+type GameCardProps = GameCardType & { isWinner: boolean };
 
 export function GameCard(props: GameCardProps) {
   const classes = useStyles();
 
   return (
     <Card className={classes.root} sx={{ border: `1px solid ${props.isWinner ? 'green' : 'red'}` }}>
-      <GameCardContent {...props} type={props.type} />
+      <GameCardContent {...props} />
     </Card>
   );
 }
