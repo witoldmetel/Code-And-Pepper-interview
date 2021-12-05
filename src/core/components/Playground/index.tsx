@@ -9,7 +9,7 @@ import { usePeople } from 'src/hooks/usePeople';
 import { getPageCount } from 'src/utils/getPageCount';
 import { getRandomNumber } from 'src/utils/getRandomNumber';
 import { INIT_CARD_TITLE } from 'src/constants';
-import { Character } from '../types';
+import { GameCardType } from '../types';
 
 type PlaygroundProps = {
   type: INIT_CARD_TITLE;
@@ -21,8 +21,8 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
   const [pageCount, setPageCount] = useState(1);
   const { data, isLoading, isError, refetch } = usePeople(pageCount);
-  const [firstPlayer, setFirstPlayer] = useState<Character | null>(null);
-  const [secondPlayer, setSecondPlayer] = useState<Character | null>(null);
+  const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
+  const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
 
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
@@ -77,13 +77,13 @@ export function Playground({ type, onPlayClick }: PlaygroundProps) {
       <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
         <GameCard
-          {...(firstPlayer as Character)}
+          {...(firstPlayer as GameCardType)}
           type={type}
           isWinner={battleResult.includes(firstPlayer?.name as string)}
         />
         vs.
         <GameCard
-          {...(secondPlayer as Character)}
+          {...(secondPlayer as GameCardType)}
           type={type}
           isWinner={battleResult.includes(secondPlayer?.name as string)}
         />

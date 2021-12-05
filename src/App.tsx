@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { ThemeConfig } from './core/theme';
 import { Layout } from './core/layouts';
 import MainPage from './pages/MainPage';
+import { GameProvider } from './contexts/GameContext';
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -18,11 +20,14 @@ const queryClient = new QueryClient({
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeConfig>
-        <Layout>
-          <MainPage />
-        </Layout>
-      </ThemeConfig>
+      <GameProvider>
+        <ThemeConfig>
+          <Layout>
+            <MainPage />
+          </Layout>
+        </ThemeConfig>
+      </GameProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
