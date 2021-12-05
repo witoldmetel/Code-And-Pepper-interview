@@ -1,20 +1,23 @@
 export enum INIT_CARD_TITLE {
   CHARACTER = 'Character',
   RANDOM = 'Random',
-  SHIP = 'Ship'
+  STARSHIP = 'Starship'
 }
 
 export const initCards = [
   {
     title: INIT_CARD_TITLE.CHARACTER,
-    description: ['skill', 'skill', 'skill', 'skill']
+    icon: 'people',
+    description: 'A person with greater mass wins'
   },
   {
     title: INIT_CARD_TITLE.RANDOM,
-    description: ['skill', 'skill', 'skill', 'skill']
+    icon: 'question',
+    description: 'Random choice between a character and a starship'
   },
   {
-    title: INIT_CARD_TITLE.SHIP,
-    description: ['skill', 'skill', 'skill', 'skill']
+    title: INIT_CARD_TITLE.STARSHIP,
+    icon: 'rocket',
+    description: 'A starship with more crew wins'
   }
 ];
