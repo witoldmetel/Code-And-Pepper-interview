@@ -39,7 +39,6 @@ function GameProvider({ children }: { children: ReactNode }) {
     data: peopleData,
     isLoading: isLoadingPeopleData,
     isError: isErrorPeopleData,
-    isFetching: isFetchingPeopleData,
     refetch: refetchPeople
   } = usePeople(peoplePageCount);
   const [starshipPageCount, setStarshipPageCount] = useState(1);
@@ -47,7 +46,6 @@ function GameProvider({ children }: { children: ReactNode }) {
     data: starshipsData,
     isLoading: isLoadingStarshipsData,
     isError: isErrorStarshipsData,
-    isFetching: isFetchingStarshipsData,
     refetch: refetchStarships
   } = useStarships(starshipPageCount);
 
@@ -60,7 +58,6 @@ function GameProvider({ children }: { children: ReactNode }) {
         data: peopleData,
         isLoading: isLoadingPeopleData,
         isError: isErrorPeopleData,
-        isFetching: isFetchingPeopleData,
         refetch: refetchPeople
       });
     }
@@ -70,7 +67,6 @@ function GameProvider({ children }: { children: ReactNode }) {
         data: starshipsData,
         isLoading: isLoadingStarshipsData,
         isError: isErrorStarshipsData,
-        isFetching: isFetchingStarshipsData,
         refetch: refetchStarships
       });
     }
@@ -86,7 +82,7 @@ function GameProvider({ children }: { children: ReactNode }) {
       setStarshipPageCount(getPageCount(starshipsData.count));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedResource]);
+  }, [resource]);
 
   const onResourceSelect = (resource: INIT_CARD_TITLE) => {
     setResource(resource);

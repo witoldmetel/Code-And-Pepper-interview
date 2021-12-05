@@ -22,16 +22,7 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
 
   //@todo: Add proper type
-  const { data, isLoading, isError, isFetching, refetch } = gameData as any;
-
-  useEffect(() => {
-    if (firstPlayer && secondPlayer) {
-      const result = getBattleResult(firstPlayer, secondPlayer);
-
-      setBattleResult(result);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstPlayer, secondPlayer]);
+  const { data, isLoading, isError, refetch } = gameData as any;
 
   useEffect(() => {
     if (data) {
@@ -45,6 +36,15 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+    if (firstPlayer && secondPlayer) {
+      const result = getBattleResult(firstPlayer, secondPlayer);
+
+      setBattleResult(result);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstPlayer, secondPlayer]);
 
   const onPlayAgainClick = () => () => refetch();
 
