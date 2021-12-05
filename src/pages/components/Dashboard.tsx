@@ -11,7 +11,7 @@ type DashboardProps = {
 
 export function Dashboard({ onPlayClick }: DashboardProps) {
   const classes = useStyles();
-  const { resource, setResource } = useGameContext();
+  const { resource, onResourceSelect } = useGameContext();
 
   return (
     <Container className={classes.root} maxWidth="lg" component="main">
@@ -27,7 +27,7 @@ export function Dashboard({ onPlayClick }: DashboardProps) {
             key={card.title}
             {...card}
             selectedCard={resource}
-            onClick={(cardTitle: INIT_CARD_TITLE) => setResource(cardTitle)}
+            onClick={(cardTitle: INIT_CARD_TITLE) => onResourceSelect(cardTitle)}
           />
         ))}
       </Grid>

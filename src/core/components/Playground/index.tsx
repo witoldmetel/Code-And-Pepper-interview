@@ -21,7 +21,8 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
 
   const isPlayerWinner = (playerName: string) => battleResult.includes(playerName);
 
-  const { data, isLoading, isError, refetch } = gameData;
+  //@todo: Add proper type
+  const { data, isLoading, isError, isFetching, refetch } = gameData as any;
 
   useEffect(() => {
     if (firstPlayer && secondPlayer) {
@@ -35,11 +36,11 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
   useEffect(() => {
     if (data) {
       if (!isPlayerWinner(firstPlayer?.name as string)) {
-        setFirstPlayer(data.results[getRandomNumber(data.results.length)]);
+        setFirstPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)]);
       }
 
       if (!isPlayerWinner(secondPlayer?.name as string)) {
-        setSecondPlayer(data.results[getRandomNumber(data.results.length)]);
+        setSecondPlayer(data.results[getRandomNumber(data?.results?.length ?? 10)]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,9 +71,9 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
     <Container maxWidth="lg" component="main" className={classes.root}>
       <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
-        <GameCard {...(firstPlayer as GameCardType)} isWinner={battleResult.includes(firstPlayer?.name as string)} />
+        <GameCard {...(firstPlayer as GameCardType)} isWinner={isPlayerWinner(firstPlayer?.name as string)} />
         vs.
-        <GameCard {...(secondPlayer as GameCardType)} isWinner={battleResult.includes(secondPlayer?.name as string)} />
+        <GameCard {...(secondPlayer as GameCardType)} isWinner={isPlayerWinner(secondPlayer?.name as string)} />
       </div>
       <div className={classes.actionsButton}>
         <Button className={classes.button} variant="contained" onClick={onPlayAgainClick()}>

@@ -1,10 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 
-import { queryClient } from '../App';
-import fetchPeople from 'src/queries/fetchPeople';
 import { usePeople } from 'src/hooks/usePeople';
 import { useStarships } from 'src/hooks/useStarships';
-import fetchStarships from 'src/queries/fetchStarships';
 import { GameContextType } from './types';
 import { INIT_CARD_TITLE } from 'src/constants';
 import { getPageCount } from 'src/utils/getPageCount';
@@ -35,43 +32,45 @@ const GameContext = createContext<GameContextType | null>(null);
 
 function GameProvider({ children }: { children: ReactNode }) {
   const [resource, setResource] = useState(INIT_CARD_TITLE.RANDOM);
-  const [pageCount, setPageCount] = useState(1);
+  // selected resource is used to set proper game
+  const [selectedResource, setSelectedResource] = useState(INIT_CARD_TITLE.RANDOM);
+  const [peoplePageCount, setPeoplePageCount] = useState(1);
   const {
     data: peopleData,
     isLoading: isLoadingPeopleData,
     isError: isErrorPeopleData,
+    isFetching: isFetchingPeopleData,
     refetch: refetchPeople
-  } = usePeople(pageCount);
+  } = usePeople(peoplePageCount);
+  const [starshipPageCount, setStarshipPageCount] = useState(1);
   const {
     data: starshipsData,
     isLoading: isLoadingStarshipsData,
     isError: isErrorStarshipsData,
+    isFetching: isFetchingStarshipsData,
     refetch: refetchStarships
-  } = useStarships(pageCount);
+  } = useStarships(starshipPageCount);
 
   //@todo: Add proper type
   const [gameData, setGameData] = useState<any>(null);
 
   useEffect(() => {
-    queryClient.prefetchQuery(['people', 1], () => fetchPeople(1));
-    queryClient.prefetchQuery(['starships', 1], () => fetchStarships(1));
-  }, []);
-
-  useEffect(() => {
-    if (getResource(resource) === INIT_CARD_TITLE.CHARACTER) {
+    if (selectedResource === INIT_CARD_TITLE.CHARACTER) {
       setGameData({
         data: peopleData,
         isLoading: isLoadingPeopleData,
         isError: isErrorPeopleData,
+        isFetching: isFetchingPeopleData,
         refetch: refetchPeople
       });
     }
 
-    if (getResource(resource) === INIT_CARD_TITLE.STARSHIP) {
+    if (selectedResource === INIT_CARD_TITLE.STARSHIP) {
       setGameData({
         data: starshipsData,
         isLoading: isLoadingStarshipsData,
         isError: isErrorStarshipsData,
+        isFetching: isFetchingStarshipsData,
         refetch: refetchStarships
       });
     }
@@ -79,18 +78,23 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [resource, peopleData, starshipsData]);
 
   useEffect(() => {
-    if (getResource(resource) === INIT_CARD_TITLE.CHARACTER && peopleData) {
-      setPageCount(getPageCount(peopleData.count));
+    if (selectedResource === INIT_CARD_TITLE.CHARACTER && peopleData) {
+      setPeoplePageCount(getPageCount(peopleData.count));
     }
 
-    if (getResource(resource) === INIT_CARD_TITLE.STARSHIP && starshipsData) {
-      setPageCount(getPageCount(starshipsData.count));
+    if (selectedResource === INIT_CARD_TITLE.STARSHIP && starshipsData) {
+      setStarshipPageCount(getPageCount(starshipsData.count));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resource]);
+  }, [selectedResource]);
+
+  const onResourceSelect = (resource: INIT_CARD_TITLE) => {
+    setResource(resource);
+    setSelectedResource(getResource(resource));
+  };
 
   const getBattleResult = (firstPlayer: Character | Starship, secondPlayer: Character | Starship): string => {
-    if (resource === INIT_CARD_TITLE.CHARACTER) {
+    if (selectedResource === INIT_CARD_TITLE.CHARACTER) {
       const firstMass = convertToInteger((firstPlayer as Character).mass);
       const secondMass = convertToInteger((secondPlayer as Character).mass);
 
@@ -109,7 +113,7 @@ function GameProvider({ children }: { children: ReactNode }) {
       return 'We have draw!';
     }
 
-    if (resource === INIT_CARD_TITLE.STARSHIP) {
+    if (selectedResource === INIT_CARD_TITLE.STARSHIP) {
       const firstCrew = convertToInteger((firstPlayer as Starship).crew);
       const secondCrew = convertToInteger((secondPlayer as Starship).crew);
 
@@ -135,9 +139,9 @@ function GameProvider({ children }: { children: ReactNode }) {
     <GameContext.Provider
       value={{
         resource,
-        setResource,
+        selectedResource,
+        onResourceSelect,
         gameData,
-        setPageCount,
         getBattleResult
       }}
     >

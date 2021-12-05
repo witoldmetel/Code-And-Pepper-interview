@@ -9,9 +9,9 @@ type GameCardContentProps = GameCardType;
 
 export function GameCardContent(props: GameCardContentProps) {
   const classes = useStyles();
-  const { resource } = useGameContext();
+  const { selectedResource } = useGameContext();
 
-  return resource === INIT_CARD_TITLE.CHARACTER ? (
+  return selectedResource === INIT_CARD_TITLE.CHARACTER ? (
     <>
       <CardHeader className={classes.header} title={props.name ?? 'Peasant'} />
       <CardContent className={classes.content}>
