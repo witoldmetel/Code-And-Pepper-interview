@@ -3,13 +3,10 @@ import { useEffect, useState } from 'react';
 import { Button, Container, CircularProgress } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-import GameService from 'src/services/GameService';
 import { GameCard } from '../GameCard';
-import { getPageCount } from 'src/utils/getPageCount';
-import { getRandomNumber } from 'src/utils/getRandomNumber';
-
-import { GameCardType } from '../types';
 import { useGameContext } from 'src/hooks/useGameContext';
+import { getRandomNumber } from 'src/utils/getRandomNumber';
+import { GameCardType } from '../types';
 
 type PlaygroundProps = {
   onPlayClick: (isGameActive: boolean) => void;
@@ -17,8 +14,7 @@ type PlaygroundProps = {
 
 export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const { resource, gameData, setPageCount } = useGameContext();
-  console.log('file: index.tsx ~ line 21 ~ Playground ~ gameData', gameData);
+  const { resource, gameData, getBattleResult } = useGameContext();
   const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
@@ -27,14 +23,9 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
 
   const { data, isLoading, isError, refetch } = gameData;
 
-  // useEffect(() => {
-  //   setPageCount(getPageCount(data.count));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   useEffect(() => {
     if (firstPlayer && secondPlayer) {
-      const result = GameService.getBattleResult(resource, firstPlayer, secondPlayer);
+      const result = getBattleResult(resource, firstPlayer, secondPlayer);
 
       setBattleResult(result);
     }

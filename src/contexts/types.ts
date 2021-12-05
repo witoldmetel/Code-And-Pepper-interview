@@ -1,1 +1,7 @@
-export type GameContextType = { resource: any; setResource: any; gameData: any; setPageCount: any };
+export type GameContextType = {
+  resource: any;
+  setResource: any;
+  gameData: any;
+  setPageCount: any;
+  getBattleResult: any;
+};
