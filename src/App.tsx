@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { ThemeConfig } from './core/theme';
 import { Layout } from './core/layouts';
@@ -27,7 +26,8 @@ export function App() {
           </Layout>
         </ThemeConfig>
       </GameProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* react query for develop */}
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }
