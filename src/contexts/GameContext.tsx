@@ -51,6 +51,7 @@ function GameProvider({ children }: { children: ReactNode }) {
 
   //@todo: Add proper type
   const [gameData, setGameData] = useState<any>(null);
+  const [counter, setCounter] = useState<{ first: number; second: number }>({ first: 0, second: 0 });
 
   useEffect(() => {
     if (selectedResource === INIT_CARD_TITLE.CHARACTER) {
@@ -99,10 +100,14 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (firstMass > secondMass) {
+        setCounter({ ...counter, first: counter.first + 1 });
+
         return `The winner is ${firstPlayer.name}`;
       }
 
       if (firstMass < secondMass) {
+        setCounter({ ...counter, second: counter.second + 1 });
+
         return `The winner is ${secondPlayer.name}`;
       }
 
@@ -118,10 +123,14 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (firstCrew > secondCrew) {
+        setCounter({ ...counter, first: counter.first + 1 });
+
         return `The winner is ${firstPlayer.name}`;
       }
 
       if (firstCrew < secondCrew) {
+        setCounter({ ...counter, second: counter.second + 1 });
+
         return `The winner is ${secondPlayer.name}`;
       }
 
@@ -138,7 +147,9 @@ function GameProvider({ children }: { children: ReactNode }) {
         selectedResource,
         onResourceSelect,
         gameData,
-        getBattleResult
+        getBattleResult,
+        counter,
+        setCounter
       }}
     >
       {children}

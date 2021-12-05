@@ -15,7 +15,7 @@ type PlaygroundProps = {
 
 export function Playground({ onPlayClick }: PlaygroundProps) {
   const classes = useStyles();
-  const { selectedResource, gameData, getBattleResult } = useGameContext();
+  const { selectedResource, gameData, getBattleResult, counter, setCounter } = useGameContext();
   const [firstPlayer, setFirstPlayer] = useState<GameCardType | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<GameCardType | null>(null);
   const [battleResult, setBattleResult] = useState('');
@@ -73,15 +73,32 @@ export function Playground({ onPlayClick }: PlaygroundProps) {
     <Container maxWidth="lg" component="main" className={classes.root}>
       <h2 className={classes.result}>{battleResult}</h2>
       <div className={classes.cardsWrapper}>
-        <GameCard {...(firstPlayer as GameCardType)} isWinner={isPlayerWinner(firstPlayer?.name as string)} />
+        <GameCard
+          {...(firstPlayer as GameCardType)}
+          heading="You"
+          counter={counter.first}
+          isWinner={isPlayerWinner(firstPlayer?.name as string)}
+        />
         vs.
-        <GameCard {...(secondPlayer as GameCardType)} isWinner={isPlayerWinner(secondPlayer?.name as string)} />
+        <GameCard
+          {...(secondPlayer as GameCardType)}
+          heading="Computer"
+          counter={counter.second}
+          isWinner={isPlayerWinner(secondPlayer?.name as string)}
+        />
       </div>
       <div className={classes.actionsButton}>
         <Button className={classes.button} variant="contained" onClick={onPlayAgainClick()}>
           Play Again
         </Button>
-        <Button className={classes.button} variant="contained" onClick={() => onPlayClick(false)}>
+        <Button
+          className={classes.button}
+          variant="contained"
+          onClick={() => {
+            onPlayClick(false);
+            setCounter({ first: 0, second: 0 });
+          }}
+        >
           Start New Game
         </Button>
       </div>
